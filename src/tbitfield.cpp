@@ -7,6 +7,7 @@
 
 #include "tbitfield.h"
 
+
 #define SIZE_TELEM_BIT (sizeof(TELEM) * 8)
 
 TBitField::TBitField(int len) : BitLen{ len }

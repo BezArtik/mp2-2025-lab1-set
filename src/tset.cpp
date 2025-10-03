@@ -7,6 +7,7 @@
 
 #include "tset.h"
 
+
 TSet::TSet(int mp) : MaxPower{ mp }, BitField{ mp } {}
 
 // конструктор копирования
@@ -95,49 +96,12 @@ TSet TSet::operator~(void) // дополнение
 
 istream& operator>>(istream& istr, TSet& s) // ввод
 {
-    int maxPower = s.GetMaxPower();
-    TSet result(maxPower);
-
-    char ch;
-    istr >> ch;
-
-    if (ch != '{') {
-        istr.putback(ch);
-    }
-
-    while (istr >> ch) {
-        if (ch == '}') break;
-
-        if (isdigit(ch)) {
-            istr.putback(ch);
-            int elem;
-            if (istr >> elem) {
-                if (elem >= 0 && elem < maxPower) {
-                    result.InsElem(elem);
-                }
-            }
-        }
-        else if (ch != ',' && ch != ' ') {
-            istr.putback(ch);
-            break;
-        }
-    }
-
-    s = result;
+    istr >> s.BitField;
     return istr;
 }
 
 ostream& operator<<(ostream& ostr, const TSet& s) // вывод
 {
-    int count = 0;
-    int printed = 0;
-
-    for (int i = 0; i < s.GetMaxPower(); i++) {
-        if (s.IsMember(i)) {
-            ostr << i << " ";
-            printed++;
-            count++;
-        }
-    }
+    ostr << s.BitField;
     return ostr;
 }

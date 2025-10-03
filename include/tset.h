@@ -10,6 +10,7 @@
 
 #include "tbitfield.h"
 
+
 class TSet {
 private:
     int MaxPower{ 0 };       // максимальная мощность множества
