@@ -155,9 +155,12 @@ TBitField TBitField::operator&(const TBitField& bf) const // операция "�
 
 TBitField TBitField::operator~(void) // отрицание
 {
-    TBitField res(*this);
-    for (int i = 0; i < MemLen; ++i) {
-        res.pMem[i] = ~pMem[i];
+    TBitField res(BitLen);
+
+    for (int i = 0; i < BitLen; ++i) {
+        if (!GetBit(i)) {
+            res.SetBit(i);
+        }
     }
     return res;
 }
