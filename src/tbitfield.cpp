@@ -43,7 +43,7 @@ int TBitField::GetMemIndex(const int n) const // индекс Мем для би
 
 TELEM TBitField::GetMemMask(const int n) const // битовая маска для бита n
 {
-    return 1 << (n % SIZE_TELEM_BIT);
+    return static_cast<TELEM>(1) << (n % SIZE_TELEM_BIT);
 }
 
 // доступ к битам битового поля
@@ -100,16 +100,12 @@ bool TBitField::operator==(const TBitField& bf) const // сравнение
     if (BitLen != bf.BitLen) {
         return false;
     }
-
-    for (int i = 0; i < MemLen - 1; ++i) {
-        if (pMem[i] != bf.pMem[i]) {
+    for (int i = 0; i < BitLen; ++i) {
+        if (GetBit(i) != bf.GetBit(i)) {
             return false;
         }
     }
-
-    int used_bits = BitLen % SIZE_TELEM_BIT;
-    TELEM mask = (1 << used_bits) - 1;
-    return (pMem[MemLen - 1] & mask) == (bf.pMem[MemLen - 1] & mask);
+    return true;
 }
 
 bool TBitField::operator!=(const TBitField& bf) const // сравнение
@@ -120,21 +116,13 @@ bool TBitField::operator!=(const TBitField& bf) const // сравнение
 TBitField TBitField::operator|(const TBitField& bf) const // операция "или"
 {
     int maxBitLen = max(BitLen, bf.BitLen);
-    int minMemLen = min(MemLen, bf.MemLen);
     TBitField res(maxBitLen);
 
-
-    for (int i = 0; i < minMemLen; ++i) {
-        res.pMem[i] = pMem[i] | bf.pMem[i];
-    }
-    if (MemLen > minMemLen) {
-        for (int i = minMemLen; i < MemLen; ++i) {
-            res.pMem[i] = pMem[i];
-        }
-    }
-    else if (bf.MemLen > minMemLen) {
-        for (int i = minMemLen; i < bf.MemLen; ++i) {
-            res.pMem[i] = bf.pMem[i];
+    for (int i = 0; i < maxBitLen; ++i) {
+        bool bit1 = (i < BitLen) ? GetBit(i) : false;
+        bool bit2 = (i < bf.BitLen) ? bf.GetBit(i) : false;
+        if (bit1 || bit2) {
+            res.SetBit(i);
         }
     }
 
@@ -144,11 +132,14 @@ TBitField TBitField::operator|(const TBitField& bf) const // операция "�
 TBitField TBitField::operator&(const TBitField& bf) const // операция "и"
 {
     int maxBitLen = max(BitLen, bf.BitLen);
-    int minMemLen = min(MemLen, bf.MemLen);
     TBitField res(maxBitLen);
 
-    for (int i = 0; i < minMemLen; ++i) {
-        res.pMem[i] = pMem[i] & bf.pMem[i];
+    for (int i = 0; i < maxBitLen; ++i) {
+        bool bit1 = (i < BitLen) ? GetBit(i) : false;
+        bool bit2 = (i < bf.BitLen) ? bf.GetBit(i) : false;
+        if (bit1 && bit2) {
+            res.SetBit(i);
+        }
     }
     return res;
 }
